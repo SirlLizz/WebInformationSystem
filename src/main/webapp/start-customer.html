@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Information System</title>
+    <style>
+        table, th, td {
+            border: 1px solid;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+    <body>
+    <script src="JS/start-customer/start-customer.js"></script>
+    <script src="JS/start-customer/panels.js"></script>
+        <div class="start-page">
+            <table>
+                <tr>
+                    <td colspan="1">
+                        <button><a href="add-customer.html">Add Customer</a></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1">
+                        <button onclick="openChangePanel()">Change Customer</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" >
+                        <div id="changeDiv" style="display: none">
+                            <h2>Change Customer</h2>
+                            <p>Customer id:</p>
+                            <input id="updateId" type="text"></input>
+                            <p>
+                            <button onclick="changeCustomer()">Update Item</button>
+                            <p>
+                            <button onclick="closeChangePanel()">Close Panel</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1">
+                        <button onclick="openDeletePanel()">Delete Customer</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="1" id="deleteDiv" style="display: none">
+                        <h2>Delete Customer</h2>
+                        <p>Customer id:</p>
+                        <input id="deleteId" type="text"></input>
+                        <p>
+                        <button onclick="deleteItem()">Delete Item</button>
+                        <p>
+                        <button onclick="closeDeletePanel()">Close Panel</button>
+                    </td>
+                </tr>
+            </table>
+
+            <table id="customerTable"></table>
+
+        </div>
+    </body>
+</html>
