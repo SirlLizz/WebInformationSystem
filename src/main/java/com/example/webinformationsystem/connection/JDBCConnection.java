@@ -6,17 +6,17 @@ import java.sql.SQLException;
 
 public class JDBCConnection {
 	
-	private static String url = "jdbc:oracle:thin:@//localhost:1521/WebSystem";
+	private static String url = "jdbc:oracle:thin:@localhost:1521/WebSystem";
 	private static String username = "SYS as SYSDBA";
 	private static String password = "123";
-	
+
 	public static Connection get() {
 		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
 			return DriverManager.getConnection(url, username, password);
-		} catch (SQLException e) {
+		} catch (InstantiationException | IllegalAccessException |ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
 }

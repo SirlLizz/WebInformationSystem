@@ -1,15 +1,15 @@
 function addCustomer() {
-    var itemToInsert = {
+    var name = document.getElementById('name').value;
+    console.log(name)
+    let itemToInsert = {
         name: document.getElementById('name').value,
-        telephone: document.getElementById('telephone').value,
+        phoneNumber: document.getElementById('telephone').value,
         address: document.getElementById('address').value
     };
-    var itemToInsertJson = JSON.stringify(itemToInsert);
-    var xhttp = new XMLHttpRequest();
-    xhttp.open('POST', 'rest/customers');
+    console.log(itemToInsert)
+    let itemToInsertJson = JSON.stringify(itemToInsert);
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "rest/customers");
     xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.onload = function() {
-        selectAllItems();
-    }
     xhttp.send(itemToInsertJson);
 }

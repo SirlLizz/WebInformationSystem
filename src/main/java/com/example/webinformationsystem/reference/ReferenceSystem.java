@@ -14,14 +14,14 @@ public class ReferenceSystem{
     public List<Customer> getCustomers(){
         try (Connection connection = JDBCConnection.get()) {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("select * from customers");
-            List<Customer> customers = new ArrayList<Customer>();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS");
+            List<Customer> customers = new ArrayList<>();
             while (resultSet.next()) {
                 Customer customer = new Customer();
-                customer.setCustomerID(UUID.fromString(resultSet.getString(1)));
-                customer.setName(resultSet.getString(2));
-                customer.setPhoneNumber(resultSet.getString(3));
-                customer.setAddress(resultSet.getString(4));
+                customer.setCustomerID(UUID.fromString(resultSet.getString("ID")));
+                customer.setName(resultSet.getString("NAME"));
+                customer.setPhoneNumber(resultSet.getString("TELEPHONE"));
+                customer.setAddress(resultSet.getString("ADDRESS"));
                 customers.add(customer);
             }
             return customers;
@@ -68,6 +68,7 @@ public class ReferenceSystem{
      */
 
     public int addCustomer(Customer customer){
+        System.out.println(customer.toString());
         try (Connection connection = JDBCConnection.get()) {
             PreparedStatement preparedStatement = connection.prepareStatement("insert into customers values (?, ?, ?, ?)");
             preparedStatement.setString(1, UUID.randomUUID().toString());
