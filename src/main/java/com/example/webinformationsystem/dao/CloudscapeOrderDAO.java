@@ -1,41 +1,57 @@
-package com.example.webinformationsystem.reference;
+package com.example.webinformationsystem.dao;
 
 import com.example.webinformationsystem.connection.JDBCConnection;
+import com.example.webinformationsystem.connection.JDBCUtils;
 import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ReferenceSystem{
+public class CloudscapeOrderDAO implements Repository<Order> {
 
-    public List<Customer> getCustomers(){
-        try (Connection connection = JDBCConnection.get()) {
+    private static JDBCUtils jdbcUtils = JDBCConnection.getJDBCUtils();
+    @Override
+    public List<Order> get(){
+        try (Connection connection = jdbcUtils.getConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS");
-            List<Customer> customers = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM ORDERS");
+            List<Order> orders = new ArrayList<>();
             while (resultSet.next()) {
-                Customer customer = new Customer();
-                customer.setCustomerID(UUID.fromString(resultSet.getString("ID")));
-                customer.setName(resultSet.getString("NAME"));
-                customer.setPhoneNumber(resultSet.getString("TELEPHONE"));
-                customer.setAddress(resultSet.getString("ADDRESS"));
-                customers.add(customer);
+                Order order = new Order();
+                order.setOrderID(UUID.fromString(resultSet.getString("ID")));
+                order.setCustomer(UUID.fromString(resultSet.getString("CUSTOMER")));
+                order.setOrderDate(LocalDate.parse(resultSet.getString("DATA")));
+                order.setOrderPrice(Double.parseDouble(resultSet.getString("PRICE")));
+                orders.add(order);
             }
-            return customers;
+            return orders;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    /*
-    public List<Order> getOrders(){
-        return orders;
+    @Override
+    public int add(Order obj) {
+        return 0;
     }
-     */
+
+    @Override
+    public int remove(String id) {
+        return 0;
+    }
+
+    @Override
+    public int change(String id, Order obj) {
+        return 0;
+    }
 
     /*
     public int checkCustomer(Customer customer){
@@ -67,21 +83,6 @@ public class ReferenceSystem{
     }
      */
 
-    public int addCustomer(Customer customer){
-        System.out.println(customer.toString());
-        try (Connection connection = JDBCConnection.get()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into customers values (?, ?, ?, ?)");
-            preparedStatement.setString(1, UUID.randomUUID().toString());
-            preparedStatement.setString(2, customer.getName());
-            preparedStatement.setString(3, customer.getPhoneNumber());
-            preparedStatement.setString(4, customer.getAddress());
-            preparedStatement.executeUpdate();
-            return 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
 
     /*
     public void addOrder(Customer customer, LocalDate date, double orderPrice){
@@ -115,20 +116,6 @@ public class ReferenceSystem{
     }
      */
 
-    public int removeCustomer(String customerID){
-        try (Connection connection = JDBCConnection.get()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("delete from customers where id = ?");
-            preparedStatement.setString(1, customerID);
-            preparedStatement.executeUpdate();
-            connection.close();
-            return 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
     /*
     public void removeOrder(String orderID){
         for(int i =0; i< orders.size();i++){
@@ -139,21 +126,16 @@ public class ReferenceSystem{
     }
      */
 
-    public int changeCustomerInformation(String customerID, Customer newCustomer){
-        try (Connection connection = JDBCConnection.get()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("update customers set name = ?, telephone = ?, address = ? where id = ?");
-            preparedStatement.setString(1, UUID.randomUUID().toString());
-            preparedStatement.setString(2, newCustomer.getName());
-            preparedStatement.setString(3, newCustomer.getPhoneNumber());
-            preparedStatement.setString(4, newCustomer.getAddress());
-            preparedStatement.executeUpdate();
-            return 1;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+
+    /*
+    public void removeOrder(String orderID){
+        for(int i =0; i< orders.size();i++){
+            if(Objects.equals(orders.get(i).getOrderID(), orderID)){
+                orders.remove(i);
+            }
         }
     }
+     */
 
     /*
     public void changeOrderInformation(String orderID, Customer customer, LocalDate orderDate, double orderPrice){
@@ -166,5 +148,6 @@ public class ReferenceSystem{
         getOrderFromID(orderID).setOrderPrice(orderPrice);
     }
      */
-    
+
+
 }

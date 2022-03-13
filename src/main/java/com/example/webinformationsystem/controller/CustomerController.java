@@ -1,7 +1,7 @@
 package com.example.webinformationsystem.controller;
 
 import com.example.webinformationsystem.model.Customer;
-import com.example.webinformationsystem.reference.ReferenceSystem;
+import com.example.webinformationsystem.dao.CloudscapeCustomerDAO;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -13,27 +13,27 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CustomerController {
     @Inject
-    ReferenceSystem department;
+    CloudscapeCustomerDAO customers;
 
     @GET
     public List<Customer> selectAllItems() {
-        return department.getCustomers();
+        return customers.get();
     }
 
     @POST
     public int addCustomer(Customer item) {
-        return department.addCustomer(item);
+        return customers.add(item);
     }
 
     @PUT
     @Path("/{id}")
     public int changeCustomerInformation(@PathParam("id") String id, Customer customer) {
-        return department.changeCustomerInformation(id, customer);
+        return customers.change(id, customer);
     }
 
     @DELETE
     @Path("/{id}")
     public int deleteItem(@PathParam("id") String id) {
-        return department.removeCustomer(id);
+        return customers.remove(id);
     }
 }

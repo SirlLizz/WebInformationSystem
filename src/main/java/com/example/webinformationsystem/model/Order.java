@@ -15,8 +15,8 @@ import java.util.UUID;
 public class Order implements Serializable{
 
     @XmlAttribute(name = "ID")
-    private final UUID orderID;
-    private Customer customer;
+    private UUID orderID;
+    private UUID customer;
     private LocalDate orderDate;
     private double orderPrice;
 
@@ -27,18 +27,18 @@ public class Order implements Serializable{
         this.orderPrice = 0;
     }
 
-    public Order(Customer customer, LocalDate orderDate, double orderPrice){
+    public Order(UUID customer, LocalDate orderDate, double orderPrice){
         this.orderID = UUID.randomUUID();
         this.customer = customer;
         this.orderDate = orderDate;
         this.orderPrice = orderPrice;
     }
 
-    public Customer getCustomer(){
+    public UUID getCustomer(){
         return customer;
     }
 
-    public void setCustomer(Customer newCustomer){
+    public void setCustomer(UUID newCustomer){
         customer = newCustomer;
     }
 
@@ -62,6 +62,10 @@ public class Order implements Serializable{
 
     public String getOrderID(){
         return orderID.toString();
+    }
+
+    public void setOrderID(UUID orderID) {
+        this.orderID = orderID;
     }
 
     public String toString(){

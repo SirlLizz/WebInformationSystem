@@ -1,22 +1,24 @@
 package com.example.webinformationsystem.connection;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 public class JDBCConnection {
-	
-	private static String url = "jdbc:oracle:thin:@localhost:1521/WebSystem";
-	private static String username = "SYS as SYSDBA";
-	private static String password = "123";
 
-	public static Connection get() {
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
-			return DriverManager.getConnection(url, username, password);
-		} catch (InstantiationException | IllegalAccessException |ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-			return null;
+	private static JDBCConnection instance = new JDBCConnection();
+	private JDBCUtils jdbcUtil;
+
+	public static JDBCConnection getInstance() {
+		return instance;
+	}
+
+	private JDBCUtils prepareJDBCUtils() {
+		if (jdbcUtil == null) {
+			jdbcUtil = new JDBCUtils();
+			jdbcUtil.init("jdbc/ConnectionPool");
 		}
+
+		return jdbcUtil;
+	}
+
+	public static synchronized JDBCUtils getJDBCUtils() {
+		return getInstance().prepareJDBCUtils();
 	}
 }
