@@ -14,7 +14,6 @@ public class JDBCConnection {
 			jdbcUtil = new JDBCUtils();
 			jdbcUtil.init("jdbc/ConnectionPool");
 		}
-
 		return jdbcUtil;
 	}
 

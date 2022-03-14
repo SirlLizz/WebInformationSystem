@@ -21,8 +21,8 @@ public class CustomerController {
     }
 
     @POST
-    public int addCustomer(Customer item) {
-        return customers.add(item);
+    public int addCustomer(Customer customer) {
+        return customers.add(customer);
     }
 
     @PUT

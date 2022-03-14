@@ -37,7 +37,7 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
     @Override
     public int add(Customer customer){
         try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into customers values (?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO CUSTOMERS VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, UUID.randomUUID().toString());
             preparedStatement.setString(2, customer.getName());
             preparedStatement.setString(3, customer.getPhoneNumber());
@@ -54,7 +54,7 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
     public int remove(String customerID){
         try (Connection connection = jdbcUtils.getConnection()) {
             PreparedStatement preparedStatement =
-                    connection.prepareStatement("delete from customers where id = ?");
+                    connection.prepareStatement("DELETE FROM CUSTOMERS WHERE ID = ?");
             preparedStatement.setString(1, customerID);
             preparedStatement.executeUpdate();
             connection.close();
@@ -69,16 +69,35 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
     public int change(String customerID, Customer newCustomer){
         try (Connection connection = jdbcUtils.getConnection()) {
             PreparedStatement preparedStatement =
-                    connection.prepareStatement("update customers set name = ?, telephone = ?, address = ? where id = ?");
-            preparedStatement.setString(1, UUID.randomUUID().toString());
-            preparedStatement.setString(2, newCustomer.getName());
-            preparedStatement.setString(3, newCustomer.getPhoneNumber());
-            preparedStatement.setString(4, newCustomer.getAddress());
+                    connection.prepareStatement("UPDATE CUSTOMERS SET NAME = ?, TELEPHONE = ?, ADDRESS = ? WHERE ID = ?");
+            preparedStatement.setString(1, newCustomer.getName());
+            preparedStatement.setString(2, newCustomer.getPhoneNumber());
+            preparedStatement.setString(3, newCustomer.getAddress());
+            preparedStatement.setString(4, customerID);
             preparedStatement.executeUpdate();
             return 1;
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    @Override
+    public boolean check(String customerID) {
+        try (Connection connection = jdbcUtils.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT ID FROM CUSTOMERS where ID = " + customerID);
+            List<String> customersID = new ArrayList<>();
+            while (resultSet.next()) {
+                customersID.add(resultSet.getString("ID"));
+            }
+            if(customersID.size() != 0){
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

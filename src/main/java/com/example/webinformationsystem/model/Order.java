@@ -60,8 +60,8 @@ public class Order implements Serializable{
         orderPrice = newOrderPrice;
     }
 
-    public String getOrderID(){
-        return orderID.toString();
+    public UUID getOrderID(){
+        return orderID;
     }
 
     public void setOrderID(UUID orderID) {

@@ -5,10 +5,7 @@ import com.example.webinformationsystem.connection.JDBCUtils;
 import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.UUID;
 public class CloudscapeOrderDAO implements Repository<Order> {
 
     private static JDBCUtils jdbcUtils = JDBCConnection.getJDBCUtils();
+
     @Override
     public List<Order> get(){
         try (Connection connection = jdbcUtils.getConnection()) {
@@ -39,115 +37,69 @@ public class CloudscapeOrderDAO implements Repository<Order> {
     }
 
     @Override
-    public int add(Order obj) {
-        return 0;
+    public int add(Order order) {
+        try (Connection connection = jdbcUtils.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO ORDERS VALUES (?, ?, ?, ?)");
+            preparedStatement.setString(1, order.getOrderID().toString());
+            preparedStatement.setString(2, order.getCustomer().toString());
+            preparedStatement.setObject(3, order.getOrderDate(), Types.DATE);
+            preparedStatement.setDouble(4, order.getOrderPrice());
+            preparedStatement.executeUpdate();
+            return 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override
-    public int remove(String id) {
-        return 0;
+    public int remove(String orderID) {
+        try (Connection connection = jdbcUtils.getConnection()) {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("DELETE FROM ORDERS WHERE id = ?");
+            preparedStatement.setString(1, orderID);
+            preparedStatement.executeUpdate();
+            connection.close();
+            return 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     @Override
-    public int change(String id, Order obj) {
-        return 0;
+    public int change(String orderID, Order newOrder) {
+        try (Connection connection = jdbcUtils.getConnection()) {
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE ORDERS SET CUSTOMER = ?, DATA = ?, PRICE = ? WHERE ID = ?");
+            preparedStatement.setString(1, newOrder.getCustomer().toString());
+            preparedStatement.setObject(2, newOrder.getOrderDate(), Types.DATE);
+            preparedStatement.setDouble(3, newOrder.getOrderPrice());
+            preparedStatement.setString(4, orderID);
+            preparedStatement.executeUpdate();
+            return 1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
-    /*
-    public int checkCustomer(Customer customer){
-        int k = -1;
-        for (int i = 0; i< customers.size();i++){
-            if((customers.get(i).getName().equals(customer.getName()))&&
-                    (customers.get(i).getAddress().equals(customer.getAddress()))&&
-                    (customers.get(i).getPhoneNumber().equals(customer.getPhoneNumber()))){
-                k=i;
+    @Override
+    public boolean check(String orderID) {
+        try (Connection connection = jdbcUtils.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT ID FROM ORDERS where ID = " + orderID);
+            List<String> ordersID = new ArrayList<>();
+            while (resultSet.next()) {
+                ordersID.add(resultSet.getString("ID"));
             }
-        }
-        return k;
-    }
-     */
-
-    /*
-    public int checkOrder(Order order){
-        int k = -1;
-        for (int i = 0; i< orders.size();i++){
-            if((orders.get(i).getOrderDate().equals(order.getOrderDate()))&&
-                    (orders.get(i).getOrderPrice() == order.getOrderPrice())&&
-                    (orders.get(i).getCustomer().getAddress().equals(order.getCustomer().getAddress()))&&
-                    (orders.get(i).getCustomer().getPhoneNumber().equals(order.getCustomer().getPhoneNumber()))&&
-                    (orders.get(i).getCustomer().getName().equals(order.getCustomer().getName()))){
-                k = i;
+            if(ordersID.size() != 0){
+                return true;
             }
-        }
-        return k;
-    }
-     */
-
-
-    /*
-    public void addOrder(Customer customer, LocalDate date, double orderPrice){
-        if(checkCustomer(customer) == -1){
-            orders.add(new Order(customer, date, orderPrice));
-        }else{
-            orders.add(new Order(customers.get(checkCustomer(customer)), date, orderPrice));
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
-     */
-
-    /*
-    public Customer getCustomerFromID(String customerID){
-        for (Customer customer : customers) {
-            if (Objects.equals(customer.getCustomerID(), customerID)) {
-                return customer;
-            }
-        }
-        return null;
-    }
-     */
-
-    /*
-    public Order getOrderFromID(String orderID){
-        for (Order order : orders) {
-            if (Objects.equals(order.getOrderID(), orderID)) {
-                return order;
-            }
-        }
-        return null;
-    }
-     */
-
-    /*
-    public void removeOrder(String orderID){
-        for(int i =0; i< orders.size();i++){
-            if(Objects.equals(orders.get(i).getOrderID(), orderID)){
-                orders.remove(i);
-            }
-        }
-    }
-     */
-
-
-    /*
-    public void removeOrder(String orderID){
-        for(int i =0; i< orders.size();i++){
-            if(Objects.equals(orders.get(i).getOrderID(), orderID)){
-                orders.remove(i);
-            }
-        }
-    }
-     */
-
-    /*
-    public void changeOrderInformation(String orderID, Customer customer, LocalDate orderDate, double orderPrice){
-        if(checkCustomer(customer) == -1){
-            getOrderFromID(orderID).setCustomer(customer);
-        }else{
-            getOrderFromID(orderID).setCustomer(customers.get(checkCustomer(customer)));
-        }
-        getOrderFromID(orderID).setOrderDate(orderDate);
-        getOrderFromID(orderID).setOrderPrice(orderPrice);
-    }
-     */
-
-
 }
