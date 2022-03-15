@@ -2,12 +2,15 @@ package com.example.webinformationsystem.model;
 
 import com.example.webinformationsystem.reference.LocalDateAdapter;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 @XmlRootElement
@@ -17,7 +20,7 @@ public class Order implements Serializable{
     @XmlAttribute(name = "ID")
     private UUID orderID;
     private UUID customer;
-    private LocalDate orderDate;
+    private String orderDate;
     private double orderPrice;
 
     public Order(){
@@ -27,7 +30,7 @@ public class Order implements Serializable{
         this.orderPrice = 0;
     }
 
-    public Order(UUID customer, LocalDate orderDate, double orderPrice){
+    public Order(UUID customer, String orderDate, double orderPrice){
         this.orderID = UUID.randomUUID();
         this.customer = customer;
         this.orderDate = orderDate;
@@ -42,12 +45,11 @@ public class Order implements Serializable{
         customer = newCustomer;
     }
 
-    public LocalDate getOrderDate(){
+    public String getOrderDate(){
         return orderDate;
     }
 
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    public void setOrderDate(LocalDate newOrderDate)
+    public void setOrderDate(String newOrderDate)
     {
         orderDate = newOrderDate;
     }

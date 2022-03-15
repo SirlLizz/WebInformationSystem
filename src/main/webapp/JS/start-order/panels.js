@@ -15,4 +15,3 @@ function closeDeletePanel() {
     document.getElementById("deleteId").value = "";
     document.getElementById("deleteDiv").style.display = "none";
 }
-

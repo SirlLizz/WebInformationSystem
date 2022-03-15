@@ -12,35 +12,26 @@
     </style>
 </head>
     <body>
-    <script src="JS/start-customer/start-customer.js"></script>
-    <script src="JS/start-customer/panels.js"></script>
+    <script src="JS/start-order/start-order.js"></script>
+    <script src="JS/start-order/panels.js"></script>
         <div class="start-page">
             <table>
                 <tr>
                     <td colspan="1">
-                        <button><a href="add-customer.html">Add Customer</a></button>
+                        <button><a href="add-order.html">Add Order</a></button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="1">
-                        <button onclick="openChangePanel(); getCustomers()">Change Customer</button>
+                        <button onclick="openChangePanel()">Change Order</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="1" >
                         <div id="changeDiv" style="display: none">
-                            <h2>Change Customer</h2>
+                            <h2>Change Order</h2>
                             <p>Customer id:</p>
-                            <select id = "updateCustomerChoose" multiple></select>
-                            <p>
-                            <p>Name id:</p>
-                            <input id="updateName" type="text"/>
-                            <p>
-                            <p>Telephone id:</p>
-                            <input id="updatePhone" type="text"/>
-                            <p>
-                            <p>Address id:</p>
-                            <input id="updateAddress" type="text"/>
+                            <input id="updateId" type="text"/>
                             <p>
                             <button onclick="changeCustomer()">Update Item</button>
                             <p>
@@ -50,7 +41,7 @@
                 </tr>
                 <tr>
                     <td colspan="1">
-                        <button onclick="openDeletePanel()">Delete Customer</button>
+                        <button onclick="openDeletePanel()">Delete Order</button>
                     </td>
                 </tr>
                 <tr>
@@ -66,12 +57,12 @@
                 </tr>
                 <tr>
                     <td colspan="1">
-                        <button><a href="start-order.html">Order Table</a></button>
+                        <button><a href="start-customer.html">Customer Table</a></button>
                     </td>
                 </tr>
             </table>
 
-            <table id="customerTable"></table>
+            <table id="orderTable"></table>
         </div>
     </body>
 </html>

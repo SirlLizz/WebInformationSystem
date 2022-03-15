@@ -4,10 +4,15 @@ window.onload = function() {
 
 function selectAllItems() {
 	var xhttp = new XMLHttpRequest();
-	xhttp.open("GET", "rest/customers");
+	xhttp.open("GET", "rest/customers/");
 	xhttp.onload = function() {
         var customers = JSON.parse(xhttp.responseText);
-        var rows = "";
+        var rows = "<tr>" +
+            "<td>" + 'ID' + "</td>" +
+            "<td>" + 'Name' + "</td>" +
+            "<td>" + 'PhoneNumber' + "</td>" +
+            "<td>" + 'Address' + "</td>" +
+            "</tr>";
         for (i = 0; i < customers.length; i++) {
             rows +=
                 "<tr>" +
@@ -23,11 +28,13 @@ function selectAllItems() {
 }
 
 function changeCustomer() {
+    var id = document.getElementById('updateCustomerChoose').value
     var itemToUpdate = {
-		value: document.getElementById('updateId').value
+        name: document.getElementById('updateName').value,
+        phoneNumber: document.getElementById('updatePhone').value,
+        address: document.getElementById('updateAddress').value
 	};
     var itemToUpdateJson = JSON.stringify(itemToUpdate);
-    var id = document.getElementById('updateId').value;
     var xhttp = new XMLHttpRequest();
     xhttp.open('PUT', 'rest/customers/' + id);
     xhttp.setRequestHeader('Content-Type', 'application/json');
@@ -43,6 +50,24 @@ function deleteItem() {
     xhttp.open('DELETE', 'rest/customers/' + id);
     xhttp.onload = function() {
         selectAllItems();
+    }
+    xhttp.send();
+}
+
+function getCustomers() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/customers/");
+    xhttp.onload = function() {
+        var customers = JSON.parse(xhttp.responseText);
+        let rows = '';
+        for (let i = 0; i < customers.length; i++) {
+            rows +=
+                "<option value = " + customers[i].customerID + ">" +
+                customers[i].name + "</option>";
+        }
+        console.log(rows)
+        console.log(customers)
+        document.getElementById("updateCustomerChoose").innerHTML = rows;
     }
     xhttp.send();
 }
