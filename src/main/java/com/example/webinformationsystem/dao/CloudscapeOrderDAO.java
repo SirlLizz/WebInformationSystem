@@ -42,7 +42,7 @@ public class CloudscapeOrderDAO implements Repository<Order> {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO ORDERS VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, order.getOrderID().toString());
             preparedStatement.setString(2, order.getCustomer().toString());
-            preparedStatement.setObject(3, order.getOrderDate(), Types.DATE);
+            preparedStatement.setObject(3, order.getOrderDate().toLocalDate(), Types.DATE);
             preparedStatement.setDouble(4, order.getOrderPrice());
             preparedStatement.executeUpdate();
             return 1;

@@ -29,5 +29,4 @@ function addOrder() {
     xhttp.open("POST", "rest/orders/");
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.send(itemToInsertJson);
-    console.log(itemToInsert);
 }

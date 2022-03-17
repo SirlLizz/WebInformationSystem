@@ -3,31 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Information System</title>
-    <style>
-        table, th, td {
-            border: 1px solid;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
 </head>
     <body>
     <script src="JS/start-customer/start-customer.js"></script>
     <script src="JS/start-customer/panels.js"></script>
+    <link rel = "stylesheet" href="CSS/style.css">
         <div class="start-page">
             <table>
+                <td colspan="1">
+                    <a href="add-customer.html"><button>Add Customer</button></a>
+                </td>
+                <td colspan="1">
+                    <button onclick="openChangePanel(); getCustomersToUpdate()">Change Customer</button>
+                </td>
+                <td colspan="1">
+                    <button onclick="openDeletePanel(); getCustomersToDelete();">Delete Customer</button>
+                </td>
+                <td colspan="1">
+                    <a href="start-order.html"><button>Order Table</button></a>
+                </td>
                 <tr>
-                    <td colspan="1">
-                        <button><a href="add-customer.html">Add Customer</a></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1">
-                        <button onclick="openChangePanel(); getCustomersToUpdate()">Change Customer</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" >
+                    <td colspan="4" >
                         <div id="changeDiv" style="display: none">
                             <h2>Change Customer</h2>
                             <p>Customer id:</p>
@@ -42,31 +38,23 @@
                             <p>Address:</p>
                             <input id="updateAddress" type="text" maxlength = 40/>
                             <p>
-                            <button onclick="changeCustomer()">Update Item</button>
+                                <button onclick="changeCustomer()">Update Item</button>
                             <p>
-                            <button onclick="closeChangePanel()">Close Panel</button>
+                                <button onclick="closeChangePanel()">Close Panel</button>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="1">
-                        <button onclick="openDeletePanel(); getCustomersToDelete();">Delete Customer</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1" id="deleteDiv" style="display: none">
-                        <h2>Delete Customer</h2>
-                        <p>Customer id:</p>
-                        <select id = "deleteCustomerChoose" multiple></select>
-                        <p>
-                        <button onclick="deleteCustomer()">Delete Item</button>
-                        <p>
-                        <button onclick="closeDeletePanel()">Close Panel</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="1">
-                        <button><a href="start-order.html">Order Table</a></button>
+                    <td colspan="4" >
+                        <div id="deleteDiv" style="display: none">
+                            <h2>Delete Customer</h2>
+                            <p>Customer id:</p>
+                            <select id = "deleteCustomerChoose" multiple></select>
+                            <p>
+                                <button onclick="deleteCustomer()">Delete Item</button>
+                            <p>
+                                <button onclick="closeDeletePanel()">Close Panel</button>
+                        </div>
                     </td>
                 </tr>
             </table>
