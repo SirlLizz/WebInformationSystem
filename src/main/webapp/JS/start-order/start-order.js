@@ -29,14 +29,16 @@ function selectAllItems() {
 	xhttp.send();
 }
 
-function changeCustomer() {
+function changeOrder() {
+    var id = document.getElementById('updateOrderChoose').value
     var itemToUpdate = {
-		value: document.getElementById('updateId').value
-	};
+        customer: document.getElementById('updateCustomerChoose').value,
+        orderDate: document.getElementById('updateDate').value,
+        orderPrice: document.getElementById('updatePrice').value
+    };
     var itemToUpdateJson = JSON.stringify(itemToUpdate);
-    var id = document.getElementById('updateId').value;
     var xhttp = new XMLHttpRequest();
-    xhttp.open('PUT', 'rest/customers/' + id);
+    xhttp.open('PUT', 'rest/orders/' + id);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.onload = function() {
         selectAllItems();
@@ -44,12 +46,62 @@ function changeCustomer() {
     xhttp.send(itemToUpdateJson);
 }
 
-function deleteItem() {
-    var id = document.getElementById('deleteId').value;
+function deleteOrder() {
+    var id = document.getElementById('deleteChoose').value;
     var xhttp = new XMLHttpRequest();
     xhttp.open('DELETE', 'rest/orders/' + id);
     xhttp.onload = function() {
         selectAllItems();
+    }
+    xhttp.send();
+}
+
+function getCustomers() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/customers/");
+    xhttp.onload = function() {
+        var customers = JSON.parse(xhttp.responseText);
+        let rows = '';
+        for (let i = 0; i < customers.length; i++) {
+            rows +=
+                "<option value = " + customers[i].customerID + ">" +
+                customers[i].name + "</option>";
+        }
+        console.log(rows)
+        console.log(customers)
+        document.getElementById("updateCustomerChoose").innerHTML = rows;
+    }
+    xhttp.send();
+}
+
+function getOrdersToUpdate() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/orders/");
+    xhttp.onload = function() {
+        var orders = JSON.parse(xhttp.responseText);
+        let rows = '';
+        for (let i = 0; i < orders.length; i++) {
+            rows +=
+                "<option value = " + orders[i].orderID + ">" +
+                orders[i].orderID + "</option>";
+        }
+        document.getElementById("updateOrderChoose").innerHTML = rows;
+    }
+    xhttp.send();
+}
+
+function getOrdersToDelete() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/orders/");
+    xhttp.onload = function() {
+        var orders = JSON.parse(xhttp.responseText);
+        let rows = '';
+        for (let i = 0; i < orders.length; i++) {
+            rows +=
+                "<option value = " + orders[i].orderID + ">" +
+                orders[i].orderID + "</option>";
+        }
+        document.getElementById("deleteChoose").innerHTML = rows;
     }
     xhttp.send();
 }

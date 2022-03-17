@@ -13,8 +13,6 @@ function getCustomers() {
                 "<option value = " + customers[i].customerID + ">" +
                 customers[i].name + "</option>";
         }
-        console.log(rows)
-        console.log(customers)
         document.getElementById("customerChoose").innerHTML = rows;
     }
     xhttp.send();
@@ -23,12 +21,13 @@ function getCustomers() {
 function addOrder() {
     let itemToInsert = {
         customer: document.getElementById('customerChoose').value,
-        date: document.getElementById('date').value,
-        price: document.getElementById('price').value
+        orderDate: document.getElementById('date').value,
+        orderPrice: document.getElementById('price').value
     };
     let itemToInsertJson = JSON.stringify(itemToInsert);
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "rest/orders/");
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.send(itemToInsertJson);
+    console.log(itemToInsert);
 }

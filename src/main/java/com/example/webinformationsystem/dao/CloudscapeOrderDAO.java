@@ -25,7 +25,7 @@ public class CloudscapeOrderDAO implements Repository<Order> {
                 Order order = new Order();
                 order.setOrderID(UUID.fromString(resultSet.getString("ID")));
                 order.setCustomer(UUID.fromString(resultSet.getString("CUSTOMER")));
-                order.setOrderDate(String.valueOf(resultSet.getDate("DATA")));
+                order.setOrderDate(resultSet.getDate("DATA"));
                 order.setOrderPrice(Double.parseDouble(resultSet.getString("PRICE")));
                 orders.add(order);
             }
@@ -39,7 +39,6 @@ public class CloudscapeOrderDAO implements Repository<Order> {
     @Override
     public int add(Order order) {
         try (Connection connection = jdbcUtils.getConnection()) {
-            System.out.println(order.toString());
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO ORDERS VALUES (?, ?, ?, ?)");
             preparedStatement.setString(1, order.getOrderID().toString());
             preparedStatement.setString(2, order.getCustomer().toString());

@@ -23,17 +23,26 @@
                 </tr>
                 <tr>
                     <td colspan="1">
-                        <button onclick="openChangePanel()">Change Order</button>
+                        <button onclick="getOrdersToUpdate(); getCustomers(); openChangePanel();">Change Order</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="1" >
                         <div id="changeDiv" style="display: none">
                             <h2>Change Order</h2>
-                            <p>Customer id:</p>
-                            <input id="updateId" type="text"/>
+                            <p>Order id:</p>
+                            <select id = "updateOrderChoose" multiple></select>
                             <p>
-                            <button onclick="changeCustomer()">Update Item</button>
+                            <p>Customer:</p>
+                            <select id = "updateCustomerChoose" multiple></select>
+                            <p>
+                            <p>Date:</p>
+                            <input type="date" id='updateDate'/>
+                            <p>
+                            <p>Price:</p>
+                            <input type="number" id='updatePrice'/>
+                            <p>
+                            <button onclick="changeOrder()">Update Item</button>
                             <p>
                             <button onclick="closeChangePanel()">Close Panel</button>
                         </div>
@@ -41,16 +50,16 @@
                 </tr>
                 <tr>
                     <td colspan="1">
-                        <button onclick="openDeletePanel()">Delete Order</button>
+                        <button onclick="openDeletePanel(); getOrdersToDelete();">Delete Order</button>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="1" id="deleteDiv" style="display: none">
-                        <h2>Delete Customer</h2>
-                        <p>Customer id:</p>
-                        <input id="deleteId" type="text"/>
+                        <h2>Delete Order</h2>
+                        <p>Order id:</p>
+                        <select id = "deleteChoose" multiple></select>
                         <p>
-                        <button onclick="deleteItem()">Delete Item</button>
+                        <button onclick="deleteOrder()">Delete Item</button>
                         <p>
                         <button onclick="closeDeletePanel()">Close Panel</button>
                     </td>

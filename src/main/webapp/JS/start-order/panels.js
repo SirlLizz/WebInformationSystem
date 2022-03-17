@@ -3,8 +3,9 @@ function openChangePanel() {
 }
 
 function closeChangePanel() {
-    document.getElementById("updateId").value = "";
-    document.getElementById("changeDiv").style.display = "none";
+    document.getElementById("updateDate").value = "";
+    document.getElementById("updateDate").value = "updatePrice";
+    document.getElementById("changeDiv").style.display = 'none';
 }
 
 function openDeletePanel() {
@@ -12,6 +13,5 @@ function openDeletePanel() {
 }
 
 function closeDeletePanel() {
-    document.getElementById("deleteId").value = "";
     document.getElementById("deleteDiv").style.display = "none";
 }

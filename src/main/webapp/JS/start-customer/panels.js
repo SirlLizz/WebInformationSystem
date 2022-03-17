@@ -3,7 +3,9 @@ function openChangePanel() {
 }
 
 function closeChangePanel() {
-    document.getElementById("updateId").value = "";
+    document.getElementById("updateName").value = "";
+    document.getElementById("updatePhone").value = "";
+    document.getElementById("updateAddress").value = "";
     document.getElementById("changeDiv").style.display = "none";
 }
 
@@ -12,7 +14,6 @@ function openDeletePanel() {
 }
 
 function closeDeletePanel() {
-    document.getElementById("deleteId").value = "";
     document.getElementById("deleteDiv").style.display = "none";
 }
 
