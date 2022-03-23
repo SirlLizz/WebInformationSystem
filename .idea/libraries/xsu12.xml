@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="xsu12">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/xsu12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/xmlparserv2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/xml.jar!/" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://$PROJECT_DIR$/.idea/libraries" />
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/classes12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/.idea/libraries/classgen.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src/main/java" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/.idea/libraries" recursive="false" />
+  </library>
+</component>

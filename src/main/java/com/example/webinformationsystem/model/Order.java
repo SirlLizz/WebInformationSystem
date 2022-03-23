@@ -1,5 +1,9 @@
 package com.example.webinformationsystem.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -7,14 +11,21 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.UUID;
 
-@XmlRootElement
-@XmlType(name = "order")
+@Entity
+@Table(name = "ORDERS")
 public class Order implements Serializable{
 
-    @XmlAttribute(name = "ID")
+    @Id
+    @Column
     private UUID orderID;
+
+    @Column(name = "CUSTOMER")
     private UUID customer;
+
+    @Column(name = "DATA")
     private Date orderDate;
+
+    @Column(name = "PRICE")
     private double orderPrice;
 
     public Order(){

@@ -1,19 +1,28 @@
 package com.example.webinformationsystem.model;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.UUID;
 
-@XmlType(name = "customer")
-@XmlRootElement
+
+@Entity
+@Table(name = "CUSTOMERS")
 public class Customer implements Serializable {
 
-    @XmlAttribute(name = "ID")
+    @Id
+    @Column
     private UUID customerID;
+
+    @Column(name = "NAME")
     private String name;
+
+    @Column(name = "TELEPHONE")
     private String phoneNumber;
+
+    @Column(name = "ADDRESS")
     private String address;
 
     public Customer(){

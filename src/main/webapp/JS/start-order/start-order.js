@@ -105,3 +105,15 @@ function getOrdersToDelete() {
     }
     xhttp.send();
 }
+
+function xsltOrder() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/xmlOrder/");
+    xhttp.onload = function() {
+        if(xhttp.responseText == 1){
+            window.open("xlst-order.html")
+        }
+    }
+    xhttp.send();
+
+}

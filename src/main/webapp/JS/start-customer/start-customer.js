@@ -85,3 +85,14 @@ function getCustomersToDelete() {
     }
     xhttp.send();
 }
+
+function xsltCustomer() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/xmlCustomer/");
+    xhttp.onload = function() {
+        if(xhttp.responseText == 1){
+            window.open("xlst-customer.html")
+        }
+    }
+    xhttp.send();
+}

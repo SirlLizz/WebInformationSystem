@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE customers [
+    <!ELEMENT customers (customer*)>
+    <!ELEMENT customer (id, name, phoneNumber, address)>
+    <!ELEMENT id (#PCDATA)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT phoneNumber (#PCDATA)>
+    <!ELEMENT address (#PCDATA)>
+]>
