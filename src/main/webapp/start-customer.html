@@ -14,10 +14,13 @@
                     <a href="add-customer.html"><button>Add Customer</button></a>
                 </td>
                 <td colspan="1">
-                    <button onclick="openChangePanel(); getCustomersToUpdate()">Change Customer</button>
+                    <button onclick="openChangePanel(); getCustomersToChange()">Change Customer</button>
                 </td>
                 <td colspan="1">
                     <button onclick="openDeletePanel(); getCustomersToDelete();">Delete Customer</button>
+                </td>
+                <td colspan="1">
+                    <a onclick="openOpenPanel()"><button>Open XML</button></a>
                 </td>
                 <td colspan="1">
                     <a onclick="xsltCustomer()"><button>Customer XSLT</button></a>
@@ -26,7 +29,7 @@
                     <a href="start-order.html"><button>Order Table</button></a>
                 </td>
                 <tr>
-                    <td colspan="5" >
+                    <td colspan="6" >
                         <div id="changeDiv" style="display: none">
                             <h2>Change Customer</h2>
                             <p>Customer id:</p>
@@ -48,7 +51,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4" >
+                    <td colspan="6" >
                         <div id="deleteDiv" style="display: none">
                             <h2>Delete Customer</h2>
                             <p>Customer id:</p>
@@ -57,6 +60,18 @@
                                 <button onclick="deleteCustomer()">Delete Item</button>
                             <p>
                                 <button onclick="closeDeletePanel()">Close Panel</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" >
+                        <div id="openDiv" style="display: none">
+                            <h2>Open Customer XML</h2>
+                            <input type="file" id="openCustomerFile">
+                            <p>
+                                <button onclick="openCustomerFile()">Open File</button>
+                            <p>
+                                <button onclick="closeOpenPanel()">Close Panel</button>
                         </div>
                     </td>
                 </tr>

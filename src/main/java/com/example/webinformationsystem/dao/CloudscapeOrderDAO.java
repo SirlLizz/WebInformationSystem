@@ -2,11 +2,9 @@ package com.example.webinformationsystem.dao;
 
 import com.example.webinformationsystem.connection.JDBCConnection;
 import com.example.webinformationsystem.connection.JDBCUtils;
-import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -81,25 +79,6 @@ public class CloudscapeOrderDAO implements Repository<Order> {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
-        }
-    }
-
-    @Override
-    public boolean check(String orderID) {
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT ID FROM ORDERS where ID = " + orderID);
-            List<String> ordersID = new ArrayList<>();
-            while (resultSet.next()) {
-                ordersID.add(resultSet.getString("ID"));
-            }
-            if(ordersID.size() != 0){
-                return true;
-            }
-            return false;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 }

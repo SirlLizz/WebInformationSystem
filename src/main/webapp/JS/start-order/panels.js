@@ -15,3 +15,12 @@ function openDeletePanel() {
 function closeDeletePanel() {
     document.getElementById("deleteDiv").style.display = "none";
 }
+
+function openOpenPanel() {
+    document.getElementById("openDiv").style.display = "block";
+}
+
+function closeOpenPanel() {
+    document.getElementById("openOrderFile").value = "";
+    document.getElementById("openDiv").style.display = "none";
+}

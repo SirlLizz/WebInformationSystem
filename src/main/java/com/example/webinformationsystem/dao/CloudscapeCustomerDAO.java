@@ -82,23 +82,4 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
         }
     }
 
-    @Override
-    public boolean check(String customerID) {
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT ID FROM CUSTOMERS where ID = " + customerID);
-            List<String> customersID = new ArrayList<>();
-            while (resultSet.next()) {
-                customersID.add(resultSet.getString("ID"));
-            }
-            if(customersID.size() != 0){
-                return true;
-            }
-            return false;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 }

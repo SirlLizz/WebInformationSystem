@@ -6,7 +6,7 @@ import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.util.List;
+import javax.ws.rs.PathParam;
 
 @Path("/xmlOrder")
 public class XSLOrderController {
@@ -17,6 +17,18 @@ public class XSLOrderController {
     @GET
     public int createXLST() {
         return xslBean.createXSLOrder();
+    }
+
+    @POST
+    @Path("/{index}")
+    public int addXMLData(@PathParam("index") int index, String file) {
+        switch (index){
+            case 0:
+                return xslBean.replaceXMLDataOrder(file);
+            case 1:
+                return xslBean.addXMLDataOrder(file);
+        }
+        return 0;
     }
 
 }

@@ -42,6 +42,7 @@ function changeOrder() {
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.onload = function() {
         selectAllItems();
+        getOrdersToChange();
     }
     xhttp.send(itemToUpdateJson);
 }
@@ -52,6 +53,7 @@ function deleteOrder() {
     xhttp.open('DELETE', 'rest/orders/' + id);
     xhttp.onload = function() {
         selectAllItems();
+        getOrdersToDelete();
     }
     xhttp.send();
 }
@@ -74,7 +76,7 @@ function getCustomers() {
     xhttp.send();
 }
 
-function getOrdersToUpdate() {
+function getOrdersToChange() {
     var xhttp = new XMLHttpRequest();
     xhttp.open("GET", "rest/orders/");
     xhttp.onload = function() {
@@ -104,6 +106,37 @@ function getOrdersToDelete() {
         document.getElementById("deleteChoose").innerHTML = rows;
     }
     xhttp.send();
+}
+
+
+function openOrderFile() {
+    var control = document.getElementById("openOrderFile");
+    var file = control.files
+    if(file[0].type == 'text/xml'){
+        let reader = new FileReader();
+        reader.readAsText(file[0]);
+        reader.onload = function() {
+            var xhttp = new XMLHttpRequest();
+            if(confirm("Completely replace the data?")){
+                xhttp.open("POST", "rest/xmlOrder/0");
+            }else{
+                xhttp.open("POST", "rest/xmlOrder/1");
+            }
+            xhttp.onload = function() {
+                if(xhttp.responseText == 1){
+                    selectAllItems();
+                }else {
+                    alert("File is incorrect!");
+                }
+            }
+            xhttp.send(reader.result);
+        };
+        reader.onerror = function() {
+            console.log(reader.error);
+        };
+    }else{
+        alert("File is not XML");
+    }
 }
 
 function xsltOrder() {

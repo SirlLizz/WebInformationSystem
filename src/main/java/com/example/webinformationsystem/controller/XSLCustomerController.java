@@ -1,13 +1,12 @@
 package com.example.webinformationsystem.controller;
 
 import com.example.webinformationsystem.bean.XSLCustomerBean;
-import com.example.webinformationsystem.model.Customer;
 
 import javax.ejb.EJB;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import java.util.List;
+import javax.ws.rs.PathParam;
 
 @Path("/xmlCustomer")
 public class XSLCustomerController {
@@ -18,6 +17,18 @@ public class XSLCustomerController {
     @GET
     public int createXLST() {
         return xslBean.createXSLCustomer();
+    }
+
+    @POST
+    @Path("/{index}")
+    public int addXMLData(@PathParam("index") int index, String file) {
+        switch (index){
+            case 0:
+                return xslBean.replaceXMLDataCustomer(file);
+            case 1:
+                return xslBean.addXMLDataCustomer(file);
+        }
+        return 0;
     }
 
 }

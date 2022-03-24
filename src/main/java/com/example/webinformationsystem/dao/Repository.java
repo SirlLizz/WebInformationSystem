@@ -9,5 +9,4 @@ public interface Repository<T> {
     int add(T obj);
     int remove(String id);
     int change(String id, T obj);
-    boolean check(String id);
 }
