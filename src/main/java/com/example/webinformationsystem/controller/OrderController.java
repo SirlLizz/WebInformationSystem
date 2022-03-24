@@ -1,8 +1,6 @@
 package com.example.webinformationsystem.controller;
 
-import com.example.webinformationsystem.dao.CloudscapeCustomerDAO;
 import com.example.webinformationsystem.dao.CloudscapeOrderDAO;
-import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
 
 import javax.inject.Inject;

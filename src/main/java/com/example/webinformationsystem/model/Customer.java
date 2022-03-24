@@ -13,7 +13,8 @@ import java.util.UUID;
 public class Customer implements Serializable {
 
     @Id
-    @Column
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID")
     private UUID customerID;
 
     @Column(name = "NAME")

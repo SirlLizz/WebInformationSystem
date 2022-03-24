@@ -1,12 +1,6 @@
 package com.example.webinformationsystem.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.UUID;
@@ -16,10 +10,11 @@ import java.util.UUID;
 public class Order implements Serializable{
 
     @Id
-    @Column
+    @Column(name = "ID")
     private UUID orderID;
 
-    @Column(name = "CUSTOMER")
+    //@OneToOne (optional=false, cascade=CascadeType.ALL)
+    @JoinColumn(name = "CUSTOMER")
     private UUID customer;
 
     @Column(name = "DATA")
