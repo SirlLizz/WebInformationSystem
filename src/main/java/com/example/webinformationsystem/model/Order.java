@@ -6,16 +6,17 @@ import java.sql.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ORDERS")
+@Table(name = "ORDERS", schema = "SYS")
 public class Order implements Serializable{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    private UUID orderID;
+    private String orderID;
 
-    //@OneToOne (optional=false, cascade=CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "CUSTOMER")
-    private UUID customer;
+    private Customer customer;
 
     @Column(name = "DATA")
     private Date orderDate;
@@ -24,24 +25,24 @@ public class Order implements Serializable{
     private double orderPrice;
 
     public Order(){
-        this.orderID = UUID.randomUUID();
+        this.orderID = UUID.randomUUID().toString();
         this.customer = null;
         this.orderDate = null;
         this.orderPrice = 0;
     }
 
-    public Order(UUID customer, Date orderDate, double orderPrice){
-        this.orderID = UUID.randomUUID();
+    public Order(Customer customer, Date orderDate, double orderPrice){
+        this.orderID = UUID.randomUUID().toString();
         this.customer = customer;
         this.orderDate = orderDate;
         this.orderPrice = orderPrice;
     }
 
-    public UUID getCustomer(){
+    public Customer getCustomer(){
         return customer;
     }
 
-    public void setCustomer(UUID newCustomer){
+    public void setCustomer(Customer newCustomer){
         customer = newCustomer;
     }
 
@@ -62,11 +63,11 @@ public class Order implements Serializable{
         orderPrice = newOrderPrice;
     }
 
-    public UUID getOrderID(){
+    public String getOrderID(){
         return orderID;
     }
 
-    public void setOrderID(UUID orderID) {
+    public void setOrderID(String orderID) {
         this.orderID = orderID;
     }
 

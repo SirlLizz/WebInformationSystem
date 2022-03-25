@@ -1,8 +1,10 @@
 package com.example.webinformationsystem.bean;
 
-import com.example.webinformationsystem.connection.JDBCConnection;
-import com.example.webinformationsystem.connection.JDBCUtils;
+import com.example.webinformationsystem.connection.HibernateConnection;
 import com.example.webinformationsystem.model.Customer;
+import com.example.webinformationsystem.model.Order;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -28,37 +30,34 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Stateless
 @LocalBean
 public class XSLOrderBean {
 
-    private static JDBCUtils jdbcUtils = JDBCConnection.getJDBCUtils();
     private File XML_FILE = new File("C:\\Users\\Ilya\\Desktop\\Kracker\\WebInformationSystem\\src\\main\\java\\com\\example\\webinformationsystem\\xmlData\\orders.xml");
     private File HTML_FILE = new File("C:\\Users\\Ilya\\Desktop\\Kracker\\WebInformationSystem\\src\\main\\webapp\\xlst-order.html");
     private File XSLT_FILE = new File("C:\\Users\\Ilya\\Desktop\\Kracker\\WebInformationSystem\\src\\main\\java\\com\\example\\webinformationsystem\\reference\\xslt\\order.xslt");
     private File XSD_FILE = new File("C:\\Users\\Ilya\\Desktop\\Kracker\\WebInformationSystem\\src\\main\\java\\com\\example\\webinformationsystem\\reference\\xsd\\order.xsd");
 
     public int createXSLOrder() {
-        try (Connection connection = jdbcUtils.getConnection()) {
+        try (Session session = HibernateConnection.getSession()) {
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM ORDERS");
+            Query query = session.createQuery("FROM Order");
+            List<Order> orders = (List<Order>) query.list();
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbFactory.newDocumentBuilder();
             Document document = db.newDocument();
 
             Element rootElement = document.createElement("orders");
-            while (resultSet.next()) {
+            for (int i = 0; i < orders.size(); i++){
                 Element order = document.createElement("order");
-                order.appendChild(getElement(document, order, "id", resultSet.getString("ID")));
-                order.appendChild(getCustomerElement(document, order, getCustomerByID(resultSet.getString("CUSTOMER"))));
-                order.appendChild(getElement(document, order, "date", resultSet.getDate("DATA").toString()));
-                order.appendChild(getElement(document, order, "price", resultSet.getString("PRICE")));
+                order.appendChild(getElement(document, order, "id", orders.get(i).getOrderID()));
+                order.appendChild(getCustomerElement(document, order, orders.get(i).getCustomer()));
+                order.appendChild(getElement(document, order, "date", orders.get(i).getOrderDate().toString()));
+                order.appendChild(getElement(document, order, "price", Double.toString(orders.get(i).getOrderPrice())));
                 rootElement.appendChild(order);
             }
             document.appendChild(rootElement);
@@ -71,7 +70,7 @@ public class XSLOrderBean {
             transformerFactory.newTransformer(new StreamSource(XSLT_FILE)).transform(source, new StreamResult(HTML_FILE));
             return 1;
 
-        } catch (SQLException | ParserConfigurationException | TransformerException | IOException | SAXException e) {
+        } catch (ParserConfigurationException | TransformerException | IOException | SAXException e) {
             e.printStackTrace();
             return 0;
         }
@@ -79,10 +78,11 @@ public class XSLOrderBean {
     }
 
     public int replaceXMLDataOrder(String file) {
-        try (Connection connection = jdbcUtils.getConnection()) {
+        try (Session session = HibernateConnection.getSession()) {
 
-            connection.prepareStatement("TRUNCATE TABLE ORDERS").executeUpdate();
-            connection.prepareStatement("TRUNCATE TABLE CUSTOMERS").executeUpdate();
+            session.beginTransaction();
+            session.createQuery("DELETE FROM Customer ").executeUpdate();
+            session.createQuery("DELETE FROM Order ").executeUpdate();
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbFactory.newDocumentBuilder();
@@ -96,10 +96,12 @@ public class XSLOrderBean {
                 if (order.getNodeType() == Node.ELEMENT_NODE) {
                     Element orderElement = (Element) order;
                     Element customerElement = (Element) ((Element) order).getElementsByTagName("customer").item(0);
-                    addCustomer(customerElement);
-                    addOrder(orderElement, getTagValue("id", customerElement));
+                    Customer customer = getCustomer(customerElement);
+                    session.save(customer);
+                    addOrder(orderElement, customer, session);
                 }
             }
+            session.getTransaction().commit();
             return 1;
         } catch (SQLException | ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
@@ -108,7 +110,9 @@ public class XSLOrderBean {
     }
 
     public int addXMLDataOrder(String file) {
-        try{
+        try(Session session = HibernateConnection.getSession()){
+
+            session.beginTransaction();
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbFactory.newDocumentBuilder();
             Document document = db.parse(new InputSource(new StringReader(file.trim().replaceFirst("^([\\W]+)<","<"))));
@@ -121,16 +125,19 @@ public class XSLOrderBean {
                 if (order.getNodeType() == Node.ELEMENT_NODE) {
                     Element orderElement = (Element) order;
                     Element customerElement = (Element) ((Element) order).getElementsByTagName("customer").item(0);
-                    if(!checkOrderByID(getTagValue("id", orderElement))){
-                        if(!checkCustomerByID(getTagValue("id", customerElement))){
-                            addCustomer(customerElement);
-                            addOrder(orderElement, getTagValue("id", customerElement));
+                    if(!checkOrderByID(getTagValue("id", orderElement), session)){
+                        if(!checkCustomerByID(getTagValue("id", customerElement), session)){
+                            Customer customer = getCustomer(customerElement);
+                            session.save(customer);
+                            addOrder(orderElement, customer, session);
                         }else{
-                            addOrder(orderElement, getTagValue("id", customerElement));
+                            Customer customer = getCustomer(customerElement);
+                            addOrder(orderElement, customer, session);
                         }
                     }
                 }
             }
+            session.getTransaction().commit();
             return 1;
         } catch (SQLException | ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
@@ -155,23 +162,6 @@ public class XSLOrderBean {
         return customerElement;
     }
 
-    private Customer getCustomerByID(String customerID){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS where ID = '" + customerID + "'");
-            resultSet.next();
-            Customer customer = new Customer();
-            customer.setCustomerID(UUID.fromString(resultSet.getString("ID")));
-            customer.setName(resultSet.getString("NAME"));
-            customer.setPhoneNumber(resultSet.getString("TELEPHONE"));
-            customer.setAddress(resultSet.getString("ADDRESS"));
-            return customer;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private Node getElement(Document document, Element element, String name, String value) {
         Element node = document.createElement(name);
         node.appendChild(document.createTextNode(value));
@@ -184,59 +174,39 @@ public class XSLOrderBean {
         return node.getNodeValue();
     }
 
-    private void addOrder(Element element, String customerId) throws SQLException {
-        Connection connection = jdbcUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO ORDERS VALUES (?, ?, ?, ?)");
-        preparedStatement.setString(1, getTagValue("id", element));
-        preparedStatement.setString(2, customerId);
-        preparedStatement.setObject(3, getTagValue("date", element), Types.DATE);
-        preparedStatement.setDouble(4, Double.parseDouble(getTagValue("price", element)));
-        preparedStatement.executeUpdate();
+    private void addOrder(Element element, Customer customer, Session session) throws SQLException {
+        Order order = new Order();
+        order.setOrderID(getTagValue("id", element));
+        order.setCustomer(customer);
+        order.setOrderDate(Date.valueOf(getTagValue("date", element)));
+        order.setOrderPrice(Double.parseDouble(getTagValue("price", element)));
+        session.save(order);
     }
 
-    private void addCustomer(Element element) throws SQLException {
-        Connection connection = jdbcUtils.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO CUSTOMERS VALUES (?, ?, ?, ?)");
-        preparedStatement.setString(1, getTagValue("id", element));
-        preparedStatement.setString(2, getTagValue("name", element));
-        preparedStatement.setString(3, getTagValue("phoneNumber", element));
-        preparedStatement.setString(4, getTagValue("address", element));
-        preparedStatement.executeUpdate();
+    private Customer getCustomer(Element element) {
+        Customer customer = new Customer();
+        customer.setCustomerID(getTagValue("id", element));
+        customer.setName(getTagValue("name", element));
+        customer.setPhoneNumber(getTagValue("phoneNumber", element));
+        customer.setAddress(getTagValue("address", element));
+        return customer;
     }
 
-    private Boolean checkOrderByID(String orderID){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM ORDERS where ID = '" + orderID + "'");
-            List<String> ordersID = new ArrayList<>();
-            while (resultSet.next()) {
-                ordersID.add(resultSet.getString("ID"));
-            }
-            if(ordersID.size() != 0){
-                return true;
-            }
-            return false;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    private Boolean checkOrderByID(String orderID, Session session){
+        Query query = session.createQuery("select id from Order where id = :orderID");
+        query.setParameter("orderID", orderID);
+        if (query.list().isEmpty()){
+            return true;
         }
+        return false;
     }
 
-    private Boolean checkCustomerByID(String customerID){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS where ID = '" + customerID + "'");
-            List<String> customersID = new ArrayList<>();
-            while (resultSet.next()) {
-                customersID.add(resultSet.getString("ID"));
-            }
-            if(customersID.size() != 0){
-                return true;
-            }
-            return false;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    private Boolean checkCustomerByID(String customerID, Session session){
+        Query query = session.createQuery("select id from Customer where id = :customerID");
+        query.setParameter("customerID", customerID);
+        if (query.list().isEmpty()){
+            return true;
         }
+        return false;
     }
 }

@@ -1,34 +1,22 @@
 package com.example.webinformationsystem.dao;
 
-import com.example.webinformationsystem.connection.JDBCConnection;
-import com.example.webinformationsystem.connection.JDBCUtils;
+import com.example.webinformationsystem.connection.HibernateConnection;
+import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class CloudscapeOrderDAO implements Repository<Order> {
 
-    private static JDBCUtils jdbcUtils = JDBCConnection.getJDBCUtils();
-
     @Override
     public List<Order> get(){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM ORDERS");
-            List<Order> orders = new ArrayList<>();
-            while (resultSet.next()) {
-                Order order = new Order();
-                order.setOrderID(UUID.fromString(resultSet.getString("ID")));
-                order.setCustomer(UUID.fromString(resultSet.getString("CUSTOMER")));
-                order.setOrderDate(resultSet.getDate("DATA"));
-                order.setOrderPrice(Double.parseDouble(resultSet.getString("PRICE")));
-                orders.add(order);
-            }
-            return orders;
-        } catch (SQLException e) {
+        try (Session session = HibernateConnection.getSession()) {
+            Query query = session.createQuery("FROM Order");
+            return (List<Order>) query.list();
+        }catch (HibernateException e){
             e.printStackTrace();
             return null;
         }
@@ -36,15 +24,14 @@ public class CloudscapeOrderDAO implements Repository<Order> {
 
     @Override
     public int add(Order order) {
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO ORDERS VALUES (?, ?, ?, ?)");
-            preparedStatement.setString(1, order.getOrderID().toString());
-            preparedStatement.setString(2, order.getCustomer().toString());
-            preparedStatement.setObject(3, order.getOrderDate().toLocalDate(), Types.DATE);
-            preparedStatement.setDouble(4, order.getOrderPrice());
-            preparedStatement.executeUpdate();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            order.setOrderID(null);
+            session.save(order);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }
@@ -52,14 +39,15 @@ public class CloudscapeOrderDAO implements Repository<Order> {
 
     @Override
     public int remove(String orderID) {
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("DELETE FROM ORDERS WHERE id = ?");
-            preparedStatement.setString(1, orderID);
-            preparedStatement.executeUpdate();
-            connection.close();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            Order order = new Order();
+            order.setOrderID(orderID);
+            session.delete(order);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }
@@ -67,16 +55,18 @@ public class CloudscapeOrderDAO implements Repository<Order> {
 
     @Override
     public int change(String orderID, Order newOrder) {
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("UPDATE ORDERS SET CUSTOMER = ?, DATA = ?, PRICE = ? WHERE ID = ?");
-            preparedStatement.setString(1, newOrder.getCustomer().toString());
-            preparedStatement.setObject(2, newOrder.getOrderDate(), Types.DATE);
-            preparedStatement.setDouble(3, newOrder.getOrderPrice());
-            preparedStatement.setString(4, orderID);
-            preparedStatement.executeUpdate();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            Order order = session.load(Order.class, orderID);
+            order.setCustomer(new Customer("1","1", "1"));
+            order.setOrderDate(newOrder.getOrderDate());
+            order.setOrderPrice(newOrder.getOrderPrice());
+            System.out.println(order.toString());
+            session.update(order);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }

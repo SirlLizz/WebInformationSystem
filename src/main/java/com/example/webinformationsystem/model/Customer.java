@@ -1,21 +1,18 @@
 package com.example.webinformationsystem.model;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.UUID;
 
 
 @Entity
-@Table(name = "CUSTOMERS")
+@Table(name = "CUSTOMERS", schema = "SYS")
 public class Customer implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    private UUID customerID;
+    private String customerID;
 
     @Column(name = "NAME")
     private String name;
@@ -27,14 +24,14 @@ public class Customer implements Serializable {
     private String address;
 
     public Customer(){
-        this.customerID = UUID.randomUUID();
+        this.customerID = UUID.randomUUID().toString();
         this.address = null;
         this.name = null;
         this.phoneNumber = null;
     }
 
     public Customer(String name, String phoneNumber, String address){
-        customerID = UUID.randomUUID();
+        customerID = UUID.randomUUID().toString();
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -64,12 +61,12 @@ public class Customer implements Serializable {
         address = newAddress;
     }
 
-    public void setCustomerID(UUID customerID) {
+    public void setCustomerID(String customerID) {
         this.customerID = customerID;
     }
 
     public String getCustomerID(){
-        return customerID.toString();
+        return customerID;
     }
 
     public String toString(){

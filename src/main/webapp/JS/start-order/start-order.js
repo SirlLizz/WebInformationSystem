@@ -32,7 +32,7 @@ function selectAllItems() {
 function changeOrder() {
     var id = document.getElementById('updateOrderChoose').value
     var itemToUpdate = {
-        customer: document.getElementById('updateCustomerChoose').value,
+        customer: getCustomerById(),
         orderDate: document.getElementById('updateDate').value,
         orderPrice: document.getElementById('updatePrice').value
     };
@@ -108,6 +108,25 @@ function getOrdersToDelete() {
     xhttp.send();
 }
 
+function getCustomerById(){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "rest/customers/");
+    xhttp.onload = function() {
+        var customers = JSON.parse(xhttp.responseText);
+        for (let i = 0; i < customers.length; i++) {
+            if(customers[i].customerID ===  document.getElementById('updateOrderChoose').value){
+                let itemToInsert = {
+                    customerID: customers[i].customerID,
+                    name: customers[i].name,
+                    phoneNumber: customers[i].phoneNumber,
+                    address: customers[i].address
+                };
+                return JSON.stringify(itemToInsert);
+            }
+        }
+    }
+    xhttp.send();
+}
 
 function openOrderFile() {
     var control = document.getElementById("openOrderFile");

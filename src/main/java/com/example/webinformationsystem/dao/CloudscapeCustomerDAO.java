@@ -1,34 +1,21 @@
 package com.example.webinformationsystem.dao;
 
-import com.example.webinformationsystem.connection.JDBCConnection;
-import com.example.webinformationsystem.connection.JDBCUtils;
+import com.example.webinformationsystem.connection.HibernateConnection;
 import com.example.webinformationsystem.model.Customer;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class CloudscapeCustomerDAO implements Repository<Customer> {
 
-    private static JDBCUtils jdbcUtils = JDBCConnection.getJDBCUtils();
-
     @Override
     public List<Customer> get(){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM CUSTOMERS");
-            List<Customer> customers = new ArrayList<>();
-            while (resultSet.next()) {
-                Customer customer = new Customer();
-                customer.setCustomerID(UUID.fromString(resultSet.getString("ID")));
-                customer.setName(resultSet.getString("NAME"));
-                customer.setPhoneNumber(resultSet.getString("TELEPHONE"));
-                customer.setAddress(resultSet.getString("ADDRESS"));
-                customers.add(customer);
-            }
-            return customers;
-        } catch (SQLException e) {
+        try (Session session = HibernateConnection.getSession()) {
+            Query query = session.createQuery("FROM Customer");
+            return (List<Customer>) query.list();
+        }catch (HibernateException e){
             e.printStackTrace();
             return null;
         }
@@ -36,15 +23,13 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
 
     @Override
     public int add(Customer customer){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO CUSTOMERS VALUES (?, ?, ?, ?)");
-            preparedStatement.setString(1, UUID.randomUUID().toString());
-            preparedStatement.setString(2, customer.getName());
-            preparedStatement.setString(3, customer.getPhoneNumber());
-            preparedStatement.setString(4, customer.getAddress());
-            preparedStatement.executeUpdate();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            session.save(customer);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }
@@ -52,14 +37,15 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
 
     @Override
     public int remove(String customerID){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("DELETE FROM CUSTOMERS WHERE ID = ?");
-            preparedStatement.setString(1, customerID);
-            preparedStatement.executeUpdate();
-            connection.close();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            Customer customer = new Customer();
+            customer.setCustomerID(customerID);
+            session.delete(customer);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }
@@ -67,16 +53,17 @@ public class CloudscapeCustomerDAO implements Repository<Customer> {
 
     @Override
     public int change(String customerID, Customer newCustomer){
-        try (Connection connection = jdbcUtils.getConnection()) {
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement("UPDATE CUSTOMERS SET NAME = ?, TELEPHONE = ?, ADDRESS = ? WHERE ID = ?");
-            preparedStatement.setString(1, newCustomer.getName());
-            preparedStatement.setString(2, newCustomer.getPhoneNumber());
-            preparedStatement.setString(3, newCustomer.getAddress());
-            preparedStatement.setString(4, customerID);
-            preparedStatement.executeUpdate();
+        try (Session session = HibernateConnection.getSession()) {
+            session.beginTransaction();
+            Customer customer = session.load(Customer.class, customerID);
+            customer.setName(newCustomer.getName());
+            customer.setPhoneNumber(newCustomer.getPhoneNumber());
+            customer.setAddress(newCustomer.getAddress());
+            session.update(customer);
+            session.getTransaction().commit();
+            session.close();
             return 1;
-        } catch (SQLException e) {
+        }catch (HibernateException e){
             e.printStackTrace();
             return 0;
         }
