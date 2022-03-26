@@ -23,7 +23,6 @@ import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.sql.*;
 import java.util.List;
 
 
@@ -161,7 +160,7 @@ public class XSLCustomerBean {
     private Boolean checkCustomerByID(String customerID, Session session){
         Query query = session.createQuery("select id from Customer where id = :customerID");
         query.setParameter("customerID", customerID);
-        if (query.list().isEmpty()){
+        if (query.list().size()!=0){
             return true;
         }
         return false;

@@ -1,7 +1,6 @@
 package com.example.webinformationsystem.dao;
 
 import com.example.webinformationsystem.connection.HibernateConnection;
-import com.example.webinformationsystem.model.Customer;
 import com.example.webinformationsystem.model.Order;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -26,7 +25,6 @@ public class CloudscapeOrderDAO implements Repository<Order> {
     public int add(Order order) {
         try (Session session = HibernateConnection.getSession()) {
             session.beginTransaction();
-            order.setOrderID(null);
             session.save(order);
             session.getTransaction().commit();
             session.close();
@@ -58,10 +56,9 @@ public class CloudscapeOrderDAO implements Repository<Order> {
         try (Session session = HibernateConnection.getSession()) {
             session.beginTransaction();
             Order order = session.load(Order.class, orderID);
-            order.setCustomer(new Customer("1","1", "1"));
+            order.setCustomer(newOrder.getCustomer());
             order.setOrderDate(newOrder.getOrderDate());
             order.setOrderPrice(newOrder.getOrderPrice());
-            System.out.println(order.toString());
             session.update(order);
             session.getTransaction().commit();
             session.close();

@@ -4,13 +4,11 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.UUID;
 
-
 @Entity
 @Table(name = "CUSTOMERS", schema = "SYS")
 public class Customer implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private String customerID;
 

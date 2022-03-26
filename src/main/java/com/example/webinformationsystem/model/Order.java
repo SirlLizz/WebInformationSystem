@@ -1,5 +1,8 @@
 package com.example.webinformationsystem.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
@@ -10,11 +13,10 @@ import java.util.UUID;
 public class Order implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private String orderID;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "CUSTOMER")
     private Customer customer;
 
