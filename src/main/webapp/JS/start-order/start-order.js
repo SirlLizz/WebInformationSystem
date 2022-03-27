@@ -30,21 +30,37 @@ function selectAllItems() {
 }
 
 function changeOrder() {
-    var id = document.getElementById('updateOrderChoose').value
-    var itemToUpdate = {
-        customer: getCustomerById(),
-        orderDate: document.getElementById('updateDate').value,
-        orderPrice: document.getElementById('updatePrice').value
-    };
-    var itemToUpdateJson = JSON.stringify(itemToUpdate);
     var xhttp = new XMLHttpRequest();
-    xhttp.open('PUT', 'rest/orders/' + id);
-    xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.open("GET", "rest/customers/");
     xhttp.onload = function() {
-        selectAllItems();
-        getOrdersToChange();
+        var customers = JSON.parse(xhttp.responseText);
+        for (let i = 0; i < customers.length; i++) {
+            if(customers[i].customerID == document.getElementById('updateCustomerChoose').value){
+                let CustomerToUpdate = {
+                    customerID: customers[i].customerID,
+                    name: customers[i].name,
+                    phoneNumber: customers[i].phoneNumber,
+                    address: customers[i].address
+                };
+                var id = document.getElementById('updateOrderChoose').value
+                var itemToUpdate = {
+                    customer: CustomerToUpdate,
+                    orderDate: document.getElementById('updateDate').value,
+                    orderPrice: document.getElementById('updatePrice').value
+                };
+                var itemToUpdateJson = JSON.stringify(itemToUpdate);
+                var xhttpPut = new XMLHttpRequest();
+                xhttpPut.open('PUT', 'rest/orders/' + id);
+                xhttpPut.setRequestHeader('Content-Type', 'application/json');
+                xhttpPut.onload = function() {
+                    selectAllItems();
+                    getOrdersToChange();
+                }
+                xhttpPut.send(itemToUpdateJson);
+            }
+        }
     }
-    xhttp.send(itemToUpdateJson);
+    xhttp.send();
 }
 
 function deleteOrder() {
@@ -69,8 +85,6 @@ function getCustomers() {
                 "<option value = " + customers[i].customerID + ">" +
                 customers[i].name + "</option>";
         }
-        console.log(rows)
-        console.log(customers)
         document.getElementById("updateCustomerChoose").innerHTML = rows;
     }
     xhttp.send();
@@ -108,25 +122,6 @@ function getOrdersToDelete() {
     xhttp.send();
 }
 
-function getCustomerById(){
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", "rest/customers/");
-    xhttp.onload = function() {
-        var customers = JSON.parse(xhttp.responseText);
-        for (let i = 0; i < customers.length; i++) {
-            if(customers[i].customerID ===  document.getElementById('updateOrderChoose').value){
-                let itemToInsert = {
-                    customerID: customers[i].customerID,
-                    name: customers[i].name,
-                    phoneNumber: customers[i].phoneNumber,
-                    address: customers[i].address
-                };
-                return JSON.stringify(itemToInsert);
-            }
-        }
-    }
-    xhttp.send();
-}
 
 function openOrderFile() {
     var control = document.getElementById("openOrderFile");

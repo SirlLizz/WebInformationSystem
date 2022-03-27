@@ -124,14 +124,14 @@ public class XSLOrderBean {
                 Node order = nodeList.item(i);
                 if (order.getNodeType() == Node.ELEMENT_NODE) {
                     Element orderElement = (Element) order;
-                    Element customerElement = (Element) ((Element) order).getElementsByTagName("customer").item(0);
+                    Element customerElement = (Element) orderElement.getElementsByTagName("customer").item(0);
                     if(!checkOrderByID(getTagValue("id", orderElement), session)){
                         if(!checkCustomerByID(getTagValue("id", customerElement), session)){
                             Customer customer = getCustomer(customerElement);
                             session.save(customer);
                             addOrder(orderElement, customer, session);
                         }else{
-                            Customer customer = getCustomer(customerElement);
+                            Customer customer = session.load(Customer.class, getTagValue("id", customerElement));
                             addOrder(orderElement, customer, session);
                         }
                     }
@@ -195,7 +195,7 @@ public class XSLOrderBean {
     private Boolean checkOrderByID(String orderID, Session session){
         Query query = session.createQuery("select id from Order where id = :orderID");
         query.setParameter("orderID", orderID);
-        if (query.list().isEmpty()){
+        if (query.list().size()!=0){
             return true;
         }
         return false;
@@ -204,7 +204,7 @@ public class XSLOrderBean {
     private Boolean checkCustomerByID(String customerID, Session session){
         Query query = session.createQuery("select id from Customer where id = :customerID");
         query.setParameter("customerID", customerID);
-        if (query.list().isEmpty()){
+        if (query.list().size()!=0){
             return true;
         }
         return false;
