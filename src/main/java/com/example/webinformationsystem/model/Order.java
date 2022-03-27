@@ -16,7 +16,7 @@ public class Order implements Serializable{
     @Column(name = "ID")
     private String orderID;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CUSTOMER")
     private Customer customer;
 

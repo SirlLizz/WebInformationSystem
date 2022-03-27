@@ -38,6 +38,9 @@ function addOrder() {
                 };
                 let itemToInsertJson = JSON.stringify(itemToInsert);
                 let xhttpPost = new XMLHttpRequest();
+                xhttpPost.onload = function (){
+                    document.location='start-order.html';
+                }
                 xhttpPost.open("POST", "rest/orders/");
                 xhttpPost.setRequestHeader('Content-Type', 'application/json');
                 xhttpPost.send(itemToInsertJson);

@@ -17,7 +17,7 @@ function selectAllItems() {
             rows +=
                 "<tr>" +
                 "<td>" + orders[i].orderID + "</td>" +
-                "<td>" + orders[i].customer + "</td>" +
+                "<td>" + orders[i].customer.customerID + "</td>" +
                 "<td>" + orders[i].orderDate + "</td>" +
                 "<td>" + orders[i].orderPrice + "</td>" +
                 "</tr>";

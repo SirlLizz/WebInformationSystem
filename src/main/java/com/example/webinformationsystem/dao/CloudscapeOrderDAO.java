@@ -55,7 +55,6 @@ public class CloudscapeOrderDAO implements Repository<Order> {
     public int change(String orderID, Order newOrder) {
         try (Session session = HibernateConnection.getSession()) {
             session.beginTransaction();
-            System.out.println(newOrder.toString());
             Order order = session.load(Order.class, orderID);
             order.setCustomer(newOrder.getCustomer());
             order.setOrderDate(newOrder.getOrderDate());
